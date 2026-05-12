@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 // import css from './App.module.css'
 import type { Movie } from "../../types/movie"
 import { fetchMovies } from "../../services/movieService"
@@ -35,10 +35,12 @@ const handlePageChange = ({
     selected: number;}): void => {
     setPage(selected + 1);
   };
-
-  if (isSuccess && data.results.length === 0) {
+useEffect(() => {
+  if (isSuccess && data && data.results.length === 0) {
     toast.error('No movies found!');
   }
+}, [isSuccess, data]);
+
   return (
     <div>
       <SearchBar onSubmit={handleSearch} />
