@@ -1,42 +1,38 @@
-import { useState, type FormEvent } from "react";
-import styles from "./SearchBar.module.css";
-
+import css from './SearchBar.module.css';
+import toast from 'react-hot-toast';
 
 interface SearchBarProps {
-  onSubmit: (value: string) => void;
+  onSubmit: (query: string) => void;
 }
 
-export default function SearchBar({ onSubmit }: SearchBarProps) {
-    const [query, setQuery] = useState('');
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!query.trim()) return; 
-        onSubmit(query);
-    };
+export default function SearchBar({
+  onSubmit,
+}: SearchBarProps) {
+  const handleSubmit = (formData: FormData): void => {
+    const query = formData.get('query') as string;
 
-    return (
+    if (query.trim() === '') {
+      toast.error('Please enter search term!');
+      return;
+    }
 
-        <header className={styles.header}>
-            <div className={styles.container}>
-                <a
-                    className={styles.link}
-                    href="https://www.themoviedb.org/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Powered by TMDB
-                </a>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        value={query}
-                        onChange={(event)=>setQuery(event.target.value)}
-                    />
-                    <button type="submit">
-                        Search
-                    </button>
-                </form>
-            </div>
-        </header>
-    );
+    onSubmit(query);
+  };
+
+  return (
+    <header className={css.header}>
+      <form action={handleSubmit}>
+        <input
+          type="text"
+          name="query"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search movies"
+          className={css.input}
+        />
+
+        <button type="submit">Search</button>
+      </form>
+    </header>
+  );
 }
